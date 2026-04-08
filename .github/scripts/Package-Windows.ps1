@@ -101,7 +101,7 @@ function Package {
     Push-Location -Stack BuildTemp
     Ensure-Location -Path "${ProjectRoot}/release"
     Invoke-External "makensis.exe" ${NsiFile}
-    Copy-Item -Path "${ProjectRoot}/obs-multi-rtmp-setup.exe" -Destination "${OutputName}-Installer.exe"
+    Copy-Item -Path "${ProjectRoot}/obs-multi-rtmp-aa-setup.exe" -Destination "${OutputName}-Installer.exe"
     Pop-Location -Stack BuildTemp
 
     Log-Group
