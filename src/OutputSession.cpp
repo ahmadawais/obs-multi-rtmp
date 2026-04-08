@@ -16,7 +16,6 @@
 namespace mrtmp {
 namespace {
 
-constexpr auto kSharedMainEncoder = std::string_view{""}; // nullopt video/audio
 constexpr const char* kOutputName = "obs-multi-rtmp-output";
 
 std::string videoEncoderName(std::string_view configId) {
