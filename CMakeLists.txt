@@ -4,8 +4,8 @@ include("${CMAKE_CURRENT_SOURCE_DIR}/cmake/common/bootstrap.cmake" NO_POLICY_SCO
 
 project(${_name} VERSION ${_version})
 
-option(ENABLE_FRONTEND_API "Use obs-frontend-api for UI functionality" OFF)
-option(ENABLE_QT "Use Qt functionality" OFF)
+option(ENABLE_FRONTEND_API "Use obs-frontend-api for UI functionality" ON)
+option(ENABLE_QT "Use Qt functionality" ON)
 
 include(compilerconfig)
 include(defaults)
@@ -38,24 +38,30 @@ if(ENABLE_QT)
   )
 endif()
 
+# --- obs-multi-rtmp: clean rewrite layout ---
 target_sources(${CMAKE_PROJECT_NAME} PRIVATE
-  ./src/pch.h
-  ./src/obs-multi-rtmp.h
-  ./src/obs-multi-rtmp.cpp 
-  ./src/edit-widget.h
-  ./src/edit-widget.cpp
-  ./src/push-widget.h
-  ./src/push-widget.cpp
-  ./src/json-util.hpp
-  ./src/output-config.h
-  ./src/output-config.cpp
-  ./src/obs-properties-widget.h
-  ./src/obs-properties-widget.cpp
-  ./src/protocols.h
-  ./src/protocols.cpp
-  ./src/helpers.h
-  ./src/helpers.cpp
+  # core
+  ./src/Plugin.cpp
+  ./src/Logging.h
+  ./src/ObsPtr.h
+  ./src/Config.h
+  ./src/Config.cpp
+  ./src/Protocols.h
+  ./src/Protocols.cpp
+  ./src/OutputSession.h
+  ./src/OutputSession.cpp
+  # ui
+  ./src/ui/Dock.h
+  ./src/ui/Dock.cpp
+  ./src/ui/TargetRow.h
+  ./src/ui/TargetRow.cpp
+  ./src/ui/PropertiesView.h
+  ./src/ui/PropertiesView.cpp
+  ./src/ui/EditDialog.h
+  ./src/ui/EditDialog.cpp
 )
+
+target_compile_features(${CMAKE_PROJECT_NAME} PRIVATE cxx_std_20)
 
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
   ./dep/nlohmann-json
