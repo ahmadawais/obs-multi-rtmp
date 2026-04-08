@@ -113,7 +113,10 @@ private:
     static void onReconnectCb  (void* ctx, calldata_t*);
     static void onReconnectedCb(void* ctx, calldata_t*);
 
-    void emit(SessionEvent ev);
+    // NOTE: deliberately NOT named `emit` — Qt defines that as an empty
+    // macro, which would mangle this declaration whenever a translation
+    // unit includes a Qt header before this one.
+    void emitEvent(SessionEvent ev);
     void transition(SessionState next);
 
     // --- members ---

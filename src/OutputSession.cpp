@@ -8,6 +8,7 @@
 #include <utility>
 
 #include <obs-frontend-api.h>
+#include <util/config-file.h>
 
 #include "Logging.h"
 #include "Protocols.h"
@@ -65,22 +66,22 @@ bool OutputSession::start() {
     const OutputTarget* target = config_.findTarget(targetId_);
     if (!target) {
         MRTMP_ERROR("start(): target id not found: %s", targetId_.c_str());
-        emit({SessionState::Stopped, "target not found", -1});
+        emitEvent({SessionState::Stopped, "target not found", -1});
         return false;
     }
 
     // Always tear down first: OBS's output objects are single-shot in practice.
     teardown();
 
-    if (!buildOutput(*target))    { emit({SessionState::Stopped, "failed to create output", -1});  return false; }
-    if (!buildService(*target))   { emit({SessionState::Stopped, "failed to create service", -1}); teardown(); return false; }
-    if (!buildEncoders(*target))  { emit({SessionState::Stopped, "failed to create encoder", -1}); teardown(); return false; }
-    if (!attachVideoSource(*target)) { emit({SessionState::Stopped, "scene not found", -1});       teardown(); return false; }
+    if (!buildOutput(*target))    { emitEvent({SessionState::Stopped, "failed to create output", -1});  return false; }
+    if (!buildService(*target))   { emitEvent({SessionState::Stopped, "failed to create service", -1}); teardown(); return false; }
+    if (!buildEncoders(*target))  { emitEvent({SessionState::Stopped, "failed to create encoder", -1}); teardown(); return false; }
+    if (!attachVideoSource(*target)) { emitEvent({SessionState::Stopped, "scene not found", -1});       teardown(); return false; }
 
     if (!obs_output_start(output_.get())) {
         const char* err = obs_output_get_last_error(output_.get());
         MRTMP_ERROR("obs_output_start failed: %s", err ? err : "(null)");
-        emit({SessionState::Stopped, err ? err : "start failed", -1});
+        emitEvent({SessionState::Stopped, err ? err : "start failed", -1});
         teardown();
         return false;
     }
@@ -159,7 +160,9 @@ obs_encoder_t* OutputSession::resolveVideoEncoder(const OutputTarget& target, bo
     if (!vcfg) {
         MRTMP_ERROR("Video encoder config '%s' not found — falling back to main",
                     target.videoConfig->c_str());
-        return resolveVideoEncoder({.videoConfig = std::nullopt}, borrowed);
+        OutputTarget fallback = target;
+        fallback.videoConfig.reset();
+        return resolveVideoEncoder(fallback, borrowed);
     }
 
     UniqueData settings = ObsDataFromJson(vcfg->encoderParams.dump().c_str());
@@ -197,7 +200,9 @@ obs_encoder_t* OutputSession::resolveAudioEncoder(const OutputTarget& target,
     if (!acfg) {
         MRTMP_ERROR("Audio encoder config '%s' not found — falling back to main",
                     target.audioConfig->c_str());
-        return resolveAudioEncoder({.audioConfig = std::nullopt}, trackIdx, mixerIdOverride, borrowed);
+        OutputTarget fallback = target;
+        fallback.audioConfig.reset();
+        return resolveAudioEncoder(fallback, trackIdx, mixerIdOverride, borrowed);
     }
 
     UniqueData settings = ObsDataFromJson(acfg->encoderParams.dump().c_str());
@@ -269,8 +274,10 @@ bool OutputSession::attachVideoSource(const OutputTarget& target) {
         }
     }
 
-    // Audio: main audio bus is fine for every track.
-    for (int i = 0; i < MAX_OUTPUT_AUDIO_MIXES; ++i) {
+    // Audio: main audio bus is fine for every track. Loop until the first
+    // unbound slot (safer than hard-coding an OBS max that has changed name
+    // across versions).
+    for (int i = 0; i < MAX_AUDIO_MIXES; ++i) {
         if (obs_encoder_t* aenc = obs_output_get_audio_encoder(output_.get(), i))
             obs_encoder_set_audio(aenc, obs_get_audio());
     }
@@ -380,13 +387,13 @@ void OutputSession::onReconnectedCb(void* ctx, calldata_t*) {
     self->poster_([self]{ self->transition(SessionState::Running); });
 }
 
-void OutputSession::emit(SessionEvent ev) {
+void OutputSession::emitEvent(SessionEvent ev) {
     if (listener_) listener_(ev);
 }
 
 void OutputSession::transition(SessionState next) {
     state_ = next;
-    emit({next, {}, 0});
+    emitEvent({next, {}, 0});
 }
 
 // ---- stats sampling --------------------------------------------------------
