@@ -41,6 +41,6 @@ Page instfiles
 
 Section
 SetOutPath "$INSTDIR"
-File /r "release\Release\obs-multi-rtmp"
+File /r "release\RelWithDebInfo\obs-multi-rtmp"
 SectionEnd
 
