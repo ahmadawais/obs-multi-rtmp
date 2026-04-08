@@ -33,12 +33,12 @@
     },
     "platformConfig": {
         "macos": {
-            "bundleId": "net.sorayuki.obs-multi-rtmp"
+            "bundleId": "com.ahmadawais.obs-multi-rtmp-aa"
         }
     },
-    "name": "obs-multi-rtmp",
+    "name": "obs-multi-rtmp-aa",
     "version": "0.7.4.0",
-    "author": "SoraYuki",
-    "website": "https://github.com/sorayuki",
+    "author": "Ahmad Awais (rewrite) — original by SoraYuki",
+    "website": "https://github.com/ahmadawais/obs-multi-rtmp",
     "email": "me@example.com"
 }

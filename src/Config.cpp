@@ -153,7 +153,9 @@ struct ObsBFreeString {
 std::string profileConfigPath() {
     ObsBFreeString dir{obs_frontend_get_current_profile_path()};
     if (!dir) return {};
-    return std::string(dir.c_str()) + "/obs-multi-rtmp.json";
+    // Distinct filename so this plugin doesn't clobber the upstream
+    // sorayuki plugin's config when both are installed side-by-side.
+    return std::string(dir.c_str()) + "/obs-multi-rtmp-aa.json";
 }
 
 } // namespace

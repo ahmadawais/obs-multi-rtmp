@@ -16,13 +16,13 @@
 namespace mrtmp {
 namespace {
 
-constexpr const char* kOutputName = "obs-multi-rtmp-output";
+constexpr const char* kOutputName = "obs-multi-rtmp-aa-output";
 
 std::string videoEncoderName(std::string_view configId) {
-    return std::string("obs-multi-rtmp-venc-") + std::string(configId);
+    return std::string("obs-multi-rtmp-aa-venc-") + std::string(configId);
 }
 std::string audioEncoderName(std::string_view configId, int track) {
-    return std::string("obs-multi-rtmp-aenc-") + std::string(configId)
+    return std::string("obs-multi-rtmp-aa-aenc-") + std::string(configId)
          + "-t" + std::to_string(track);
 }
 
@@ -135,7 +135,7 @@ bool OutputSession::buildService(const OutputTarget& target) {
 
     UniqueData settings = ObsDataFromJson(target.serviceParam.dump().c_str());
     const std::string svcId{proto->serviceId};
-    service_.reset(obs_service_create(svcId.c_str(), "obs-multi-rtmp-service",
+    service_.reset(obs_service_create(svcId.c_str(), "obs-multi-rtmp-aa-service",
                                       settings.get(), nullptr));
     if (!service_) return false;
     // obs_output_set_service does NOT take ownership — the session keeps it.

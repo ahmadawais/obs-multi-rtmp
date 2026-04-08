@@ -4,7 +4,7 @@
 
 #include <obs-module.h>
 
-#define MRTMP_TAG "[obs-multi-rtmp] "
+#define MRTMP_TAG "[obs-multi-rtmp-aa] "
 
 #define MRTMP_LOG(level, fmt, ...) blog((level), MRTMP_TAG fmt, ##__VA_ARGS__)
 #define MRTMP_INFO(fmt, ...)  MRTMP_LOG(LOG_INFO,    fmt, ##__VA_ARGS__)

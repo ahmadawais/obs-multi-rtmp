@@ -15,7 +15,7 @@
 #endif
 
 OBS_DECLARE_MODULE()
-OBS_MODULE_USE_DEFAULT_LOCALE("obs-multi-rtmp", "en-US")
+OBS_MODULE_USE_DEFAULT_LOCALE("obs-multi-rtmp-aa", "en-US")
 OBS_MODULE_AUTHOR("SoraYuki + rewrite")
 
 namespace {
@@ -37,9 +37,11 @@ bool obs_module_load() {
     }
 
     auto* dock = new mrtmp::Dock();
-    dock->setObjectName("obs-multi-rtmp-dock");
+    // Dock id intentionally distinct from the upstream sorayuki plugin so
+    // both can coexist in the same OBS install.
+    dock->setObjectName("obs-multi-rtmp-aa-dock");
 
-    if (!obs_frontend_add_dock_by_id("obs-multi-rtmp-dock",
+    if (!obs_frontend_add_dock_by_id("obs-multi-rtmp-aa-dock",
                                      obs_module_text("Title"),
                                      dock)) {
         MRTMP_ERROR("obs_frontend_add_dock_by_id failed");
