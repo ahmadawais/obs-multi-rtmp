@@ -107,6 +107,6 @@ say "Installed ✓"
 echo
 echo "Next:"
 echo "  1. Open OBS"
-echo "  2. Docks menu → enable 'Multiple output' (or obs-multi-rtmp-dock)"
+echo "  2. Docks menu → enable 'Multiple output AA' (obs-multi-rtmp-aa-dock)"
 echo "  3. If the dock doesn't appear, check Help → Log Files → View Current Log"
-echo "     and grep for 'multi-rtmp'"
+echo "     and grep for 'obs-multi-rtmp-aa'"
